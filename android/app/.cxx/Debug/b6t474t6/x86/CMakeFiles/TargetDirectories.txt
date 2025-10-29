@@ -1,0 +1,9 @@
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/CMakeFiles/appmodules.dir
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/CMakeFiles/edit_cache.dir
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/CMakeFiles/rebuild_cache.dir
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/VectorIconsMaterialDesignIcons_autolinked_build/CMakeFiles/react_codegen_VectorIconsMaterialDesignIcons.dir
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/VectorIconsMaterialDesignIcons_autolinked_build/CMakeFiles/edit_cache.dir
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/VectorIconsMaterialDesignIcons_autolinked_build/CMakeFiles/rebuild_cache.dir
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/safeareacontext_autolinked_build/CMakeFiles/edit_cache.dir
+/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/safeareacontext_autolinked_build/CMakeFiles/rebuild_cache.dir
