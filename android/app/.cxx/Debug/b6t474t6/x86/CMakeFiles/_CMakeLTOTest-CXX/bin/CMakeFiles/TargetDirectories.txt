@@ -1,4 +1,0 @@
-/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
-/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
-/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
-/Users/nightmare28899/Documents/GitHub/ManageTask/android/app/.cxx/Debug/b6t474t6/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir
