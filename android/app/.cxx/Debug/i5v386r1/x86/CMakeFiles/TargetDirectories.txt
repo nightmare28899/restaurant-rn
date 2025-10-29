@@ -1,9 +1,0 @@
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/CMakeFiles/appmodules.dir
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/CMakeFiles/edit_cache.dir
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/CMakeFiles/rebuild_cache.dir
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/VectorIconsMaterialDesignIcons_autolinked_build/CMakeFiles/react_codegen_VectorIconsMaterialDesignIcons.dir
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/VectorIconsMaterialDesignIcons_autolinked_build/CMakeFiles/edit_cache.dir
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/VectorIconsMaterialDesignIcons_autolinked_build/CMakeFiles/rebuild_cache.dir
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/safeareacontext_autolinked_build/CMakeFiles/edit_cache.dir
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/.cxx/Debug/i5v386r1/x86/safeareacontext_autolinked_build/CMakeFiles/rebuild_cache.dir

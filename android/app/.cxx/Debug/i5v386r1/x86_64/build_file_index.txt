@@ -1,3 +1,0 @@
-/Users/nightmare28899/Documents/GitHub/ManageTask/node_modules/@react-native-vector-icons/material-design-icons/android/build/generated/source/codegen/jni/CMakeLists.txt
-/Users/nightmare28899/Documents/GitHub/ManageTask/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup/CMakeLists.txt

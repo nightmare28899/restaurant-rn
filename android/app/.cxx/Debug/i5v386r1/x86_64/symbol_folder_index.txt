@@ -1,1 +1,0 @@
-/Users/nightmare28899/Documents/GitHub/restaurant-rn/android/app/build/intermediates/cxx/Debug/i5v386r1/obj/x86_64
