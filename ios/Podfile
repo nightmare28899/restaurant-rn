@@ -28,6 +28,7 @@ target 'ManageTask' do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
+      $MLRN.post_install(installer),
       # :ccache_enabled => true
     )
   end

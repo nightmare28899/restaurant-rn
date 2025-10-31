@@ -3,6 +3,7 @@ import {View, StyleSheet, Platform} from 'react-native';
 import {Button, TextInput, IconButton} from 'react-native-paper';
 import ActionSheetBase from "../../components/actionSheet/ActionSheetBase.tsx";
 import {ActionSheetRef} from "react-native-actions-sheet";
+import { MapView } from "@maplibre/maplibre-react-native";
 
 const HomeScreen = () => {
     const [text, setText] = useState<string>('');
@@ -24,21 +25,28 @@ const HomeScreen = () => {
             //setActionSheetRef(actionSheetRef.current);
         }
     };
-    {/*<Button onPress={() => actionSheetRef.current?.hide()}>*/
-    }
-    {/*    opcion 1*/
-    }
-    {/*</Button>*/
-    }
     return (
         <>
+            <View style={{flex: 1}}>
+                <MapView
+                    style={{flex: 1}}
+                    // styleURL="https://maps.tilehosting.com/styles/bright-v11/style.json?key=<KEY>"
+                    logoEnabled={false}
+                    zoomEnabled={true}
+                    scrollEnabled={true}
+                    rotateEnabled={true}
+                    pitchEnabled={true}
+                    attributionEnabled={false}
+                    compassEnabled={true}
+                />
             <ActionSheetBase
                 actionSheetRef={actionSheetRef}
-                closeable={false}
+                closeable={true}
                 gesture={true}
                 showBackgroundColor={false}
             >
                 <View style={styles.content}>
+
                     <TextInput
                         label="Search"
                         value={text}
@@ -73,10 +81,13 @@ const HomeScreen = () => {
                             icon="tune-variant"
                             iconColor="#fff"
                             size={18}
+                            animated
+                            contentStyle={{padding: 0}}
                         />
                     </Button>
                 </View>
             </ActionSheetBase>
+            </View>
         </>
     );
 };
