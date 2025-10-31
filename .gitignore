@@ -8,12 +8,14 @@ yarn-debug.log*
 yarn-error.log*
 .npm
 .eslintcache
+package-lock.json
 
 # Archivos de empaquetamiento (Metro)
 /dist
 /build
 /temp
 .cache
+.idea
 
 # Metro/Flipper/React Native
 .watchman-tools
@@ -30,6 +32,7 @@ yarn-error.log*
 /android/*.apk
 /android/*.aab
 /android/*.keystore
+/android/app/.cxx
 
 # iOS
 /ios/build/
