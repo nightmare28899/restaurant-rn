@@ -1,9 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {View, StyleSheet, Platform, Image} from 'react-native';
+import {View, StyleSheet, Platform, Image, Alert} from 'react-native';
 import {Button, TextInput, IconButton, Card, Text} from 'react-native-paper';
 import ActionSheetBase from "../../components/actionSheet/ActionSheetBase.tsx";
 import {ActionSheetRef} from "react-native-actions-sheet";
-import {MapView} from "@maplibre/maplibre-react-native";
+
+import {WebView} from "react-native-webview";
 
 const HomeScreen = () => {
     const [text, setText] = useState<string>('');
@@ -32,20 +33,83 @@ const HomeScreen = () => {
     }
     {/*</Button>*/
     }
+    const markers = [
+        {id: 1, name: "Ciudad de México", lat: 19.4326, lng: -99.1332},
+        {id: 2, name: "Guadalajara", lat: 20.6597, lng: -103.3496},
+        {id: 3, name: "Monterrey", lat: 25.6866, lng: -100.3161},
+    ];
+
+    const leafletHTML = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mapa Leaflet</title>
+
+        <link
+          rel="stylesheet"
+          href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <style>
+          html, body, #map { height: 100%; margin: 0; padding: 0; }
+          .leaflet-popup-content { font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div id="map"></div>
+
+        <script>
+          const map = L.map('map').setView([23.6345, -102.5528], 5);
+
+          // Cargar tiles de OpenStreetMap
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap contributors'
+          }).addTo(map);
+
+          // Obtener marcadores desde React Native
+          const markers = ${JSON.stringify(markers)};
+
+          // Renderizar marcadores
+          markers.forEach((m) => {
+            const marker = L.marker([m.lat, m.lng]).addTo(map);
+            marker.bindPopup("<b>" + m.name + "</b>");
+            marker.on("click", function() {
+              // Enviar datos a React Native
+              window.ReactNativeWebView.postMessage(JSON.stringify({
+                type: "marker_click",
+                id: m.id,
+                name: m.name,
+                lat: m.lat,
+                lng: m.lng
+              }));
+            });
+          });
+        </script>
+      </body>
+    </html>
+  `;
+    const handleMessage = (event:any) => {
+        const data = JSON.parse(event.nativeEvent.data);
+        if (data.type === "marker_click") {
+            Alert.alert("Marcador tocado", `${data.name}\n(${data.lat}, ${data.lng})`);
+        }
+    };
 
     return (
         <>
             <View style={{flex: 1}}>
-                <MapView
-                    style={{flex: 1, zIndex: -1}}
-                    // styleURL="https://maps.tilehosting.com/styles/bright-v11/style.json?key=<KEY>"
-                    logoEnabled={false}
-                    zoomEnabled={true}
-                    scrollEnabled={true}
-                    rotateEnabled={true}
-                    pitchEnabled={true}
-                    attributionEnabled={false}
-                    compassEnabled={true}
+
+                <WebView
+                    originWhitelist={["*"]}
+                    source={{ html: leafletHTML }}
+                    onMessage={handleMessage}
+                    javaScriptEnabled={true}
+                    domStorageEnabled={true}
+                    style={styles.map}
                 />
 
                 <ActionSheetBase
@@ -235,6 +299,7 @@ const styles = StyleSheet.create({
         marginLeft: 4,
         color: '#555',
     },
+    map: { flex: 1 },
 });
 
 export default HomeScreen;
