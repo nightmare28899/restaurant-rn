@@ -14,8 +14,14 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'ManageTask' do
+rn_maps_path = '../node_modules/react-native-maps'
+pod 'react-native-maps/Google', :path => rn_maps_path
+
+target 'MiAppNativa' do
   config = use_native_modules!
+
+  pod 'GoogleMaps'
+  pod 'Google-Maps-iOS-Utils'
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -28,7 +34,6 @@ target 'ManageTask' do
       installer,
       config[:reactNativePath],
       :mac_catalyst_enabled => false,
-      $MLRN.post_install(installer),
       # :ccache_enabled => true
     )
   end

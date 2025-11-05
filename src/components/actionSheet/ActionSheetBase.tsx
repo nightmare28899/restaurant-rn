@@ -14,13 +14,18 @@ const ActionSheetBase: React.FC<ActionSheetBaseProps> = ({children, ...props}) =
     return (
         <ActionSheet
             ref={props.actionSheetRef}
+            onChange={(position, height) => {
+              // console.log('Position:', position);
+              // console.log('Height:', height);
+              // Position is 0 if action sheet has reached top.
+              const hasReachedTop = position === 0;
+              // Get the offset from bottom
+              const offsetFromBottom = height - position;
+            }}
             gestureEnabled={props.gesture}
             closable={props.closeable}
-            isModal={true}
-            indicatorStyle={{
-                width: 100,
-                alignSelf: "center",
-            }}
+            backgroundInteractionEnabled={true}
+            isModal={false}
             {...(props.showBackgroundColor ? { overlayColor: "transparent" } : {})}
             {...props}>
             {children}
