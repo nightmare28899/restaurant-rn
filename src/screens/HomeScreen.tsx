@@ -6,7 +6,7 @@ import {
     View,
     ActivityIndicator,
     PermissionsAndroid,
-    Alert,
+    Alert, ScrollView,
 } from 'react-native';
 import {ActionSheetRef} from 'react-native-actions-sheet';
 import Geolocation from '@react-native-community/geolocation';
@@ -33,6 +33,8 @@ const HomeScreen = () => {
         }
     };
 
+    const [snapPoints, setSnapPoints] = useState([15, 35,80])
+
     async function handlePoiClick(e: any) {
         const {name, coordinate, placeId} = e.nativeEvent;
 
@@ -42,6 +44,8 @@ const HomeScreen = () => {
             const imagePlace = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${data.photos[0].photo_reference}&key=${apiKey}`
             setShowImagePlace(imagePlace);
             setPlaceDataSelected(data);
+            setSnapPoints([35,80])
+            actionSheetRef.current?.snapToOffset(35)
         });
     }
 
@@ -148,6 +152,8 @@ const HomeScreen = () => {
                 closeable={false}
                 gesture={true}
                 showBackgroundColor={true}
+                containerStyle={{maxHeight: '70%'}}
+                snapPoints={snapPoints}
             >
                 <View style={styles.content}>
                     <TextInput
@@ -180,69 +186,78 @@ const HomeScreen = () => {
                         <IconButton
                             icon="tune-variant"
                             iconColor="#fff"
-                            size={18}
+                            size={15}
                             animated
                             contentStyle={{padding: 0}}
                         />
                     </Button>
                 </View>
 
-                <View
+                <ScrollView
                     style={{
-                        paddingHorizontal: 25,
-                    }}
-                >
-                    {placeSelected !== null && (
-                        <Card style={styles.card} mode="elevated">
-                            <View style={styles.container}>
-                                <Image
-                                    source={{
-                                        uri: showImagePlace,
-                                    }}
-                                    style={styles.image}
-                                    resizeMode="cover"
-                                />
+                        width: '100%',
+                        flexShrink: 1,
+                        height:'100%',
+                    }}>
+                    <View
+                        style={{
+                            paddingHorizontal: 10,
+                            width: '100%',
+                            height:'60%'
+                        }}
+                    >
+                        {placeSelected !== null && (
+                            <Card style={styles.card} mode="elevated">
+                                <View style={styles.container}>
+                                    <Image
+                                        source={{
+                                            uri: showImagePlace,
+                                        }}
+                                        style={styles.image}
+                                        resizeMode="cover"
+                                    />
 
-                                <View style={styles.infoContainer}>
-                                    <Text style={styles.title}>{placeSelected.name}</Text>
+                                    <View style={styles.infoContainer}>
+                                        <Text style={styles.title}>{placeSelected.name}</Text>
 
-                                    <View style={styles.ratingContainer}>
-                                        <IconButton
-                                            icon="star"
-                                            iconColor="#F5D94AFF"
-                                            size={18}
-                                            animated
-                                            contentStyle={{padding: 0}}
-                                        />
-                                        <Text style={styles.ratingText}>{placeDataSelected?.rating}</Text>
-                                        <Text style={styles.reviewText}> • 120 Reviews</Text>
-                                    </View>
-
-                                    <View style={styles.bottomRow}>
-                                        <Button
-                                            compact
-                                            style={styles.openButton}
-                                            labelStyle={{color: 'white', fontSize: 12}}
-                                        >
-                                            Open
-                                        </Button>
-
-                                        <View style={styles.locationContainer}>
+                                        <View style={styles.ratingContainer}>
                                             <IconButton
-                                                icon="map-marker"
-                                                iconColor="#f5684a"
+                                                icon="star"
+                                                iconColor="#F5D94AFF"
                                                 size={18}
                                                 animated
                                                 contentStyle={{padding: 0}}
                                             />
-                                            <Text style={styles.locationText}>USA</Text>
+                                            <Text style={styles.ratingText}>{placeDataSelected?.rating}</Text>
+                                            <Text style={styles.reviewText}> • 120 Reviews</Text>
+                                        </View>
+
+                                        <View style={styles.bottomRow}>
+                                            <Button
+                                                compact
+                                                style={styles.openButton}
+                                                labelStyle={{color: 'white', fontSize: 12}}
+                                            >
+                                                Open
+                                            </Button>
+
+                                            <View style={styles.locationContainer}>
+                                                <IconButton
+                                                    icon="map-marker"
+                                                    iconColor="#f5684a"
+                                                    size={18}
+                                                    animated
+                                                    contentStyle={{padding: 0}}
+                                                />
+                                                <Text style={styles.locationText}>USA</Text>
+                                            </View>
                                         </View>
                                     </View>
                                 </View>
-                            </View>
-                        </Card>
-                    )}
-                </View>
+                            </Card>
+                        )}
+                    </View>
+                </ScrollView>
 
                 <View style={{paddingBottom: 20}}/>
             </ActionSheetBase>
