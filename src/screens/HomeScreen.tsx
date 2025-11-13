@@ -37,7 +37,7 @@ const HomeScreen = () => {
 
     async function handlePoiClick(e: any) {
         const {name, coordinate, placeId} = e.nativeEvent;
-
+        console.log( e.nativeEvent)
         setPlaceSelected({name, coordinate, placeId});
         await getLocationInfo({placeId}).then(data => {
             console.log(data);
@@ -61,6 +61,41 @@ const HomeScreen = () => {
                 console.error('Error fetching place details:', error);
             }
         }
+    }
+
+
+    const [marker, setMarker] = useState<any[]>([])
+
+    const getMark = async (e :any) => {
+        console.log(e.nativeEvent)
+        setMarker([e.nativeEvent.coordinate])
+        const { coordinate } = e.nativeEvent;
+        const { latitude, longitude } = coordinate
+        try {
+            const response = await fetch(
+                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
+            );
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+                const placeId = data.results[0].place_id;
+                console.log('Place ID on long press:', placeId, data);
+                let body = {
+                    nativeEvent:{
+                        placeId: placeId,
+                        name:data.results[0].formatted_address,
+                        coordinate:data.results[0].navigation_points[0].location,
+                    }
+                }
+                handlePoiClick(body)
+                // You can now use this placeId as needed
+            } else {
+                console.log('No place found for this location.');
+            }
+        } catch (error) {
+            console.error('Error during reverse geocoding:', error);
+        }
+
     }
 
     useEffect(() => {
@@ -121,6 +156,8 @@ const HomeScreen = () => {
         );
     }
 
+
+
     return (
         <>
             <MapView
@@ -131,6 +168,7 @@ const HomeScreen = () => {
                 showsUserLocation
                 showsMyLocationButton
                 showsPointsOfInterests={true}
+                onLongPress={getMark}
                 onPoiClick={handlePoiClick}
                 onMapReady={() => {
                     if (region && mapRef.current) {
@@ -144,7 +182,11 @@ const HomeScreen = () => {
                     }
                 }}
             >
-                {/*<Marker coordinate={region} title="You are here" />*/}
+                {marker.map((marker, index) => (
+                        <Marker key={index+'dsa'} coordinate={marker} title="You are here" />
+                    ))
+                }
+
             </MapView>
 
             <ActionSheetBase
