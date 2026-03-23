@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "ManageTask.app"
-               BlueprintName = "ManageTask"
-               ReferencedContainer = "container:ManageTask.xcodeproj">
+               BuildableName = "MiAppNativa.app"
+               BlueprintName = "MiAppNativa"
+               ReferencedContainer = "container:MiAppNativa.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "ManageTaskTests.xctest"
-               BlueprintName = "ManageTaskTests"
-               ReferencedContainer = "container:ManageTask.xcodeproj">
+               BuildableName = "MiAppNativaTests.xctest"
+               BlueprintName = "MiAppNativaTests"
+               ReferencedContainer = "container:MiAppNativa.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ManageTask.app"
-            BlueprintName = "ManageTask"
-            ReferencedContainer = "container:ManageTask.xcodeproj">
+            BuildableName = "MiAppNativa.app"
+            BlueprintName = "MiAppNativa"
+            ReferencedContainer = "container:MiAppNativa.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "ManageTask.app"
-            BlueprintName = "ManageTask"
-            ReferencedContainer = "container:ManageTask.xcodeproj">
+            BuildableName = "MiAppNativa.app"
+            BlueprintName = "MiAppNativa"
+            ReferencedContainer = "container:MiAppNativa.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

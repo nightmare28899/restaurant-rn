@@ -1,44 +1,48 @@
+/**
+ * Sample React Native App
+ * https://github.com/facebook/react-native
+ *
+ * @format
+ */
+
 import React from 'react';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
+import { SafeAreaProvider, SafeAreaView, initialWindowMetrics } from 'react-native-safe-area-context';
 import { PaperProvider } from 'react-native-paper';
-import {
-  SafeAreaProvider,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import HomeScreen from './src/screens/HomeScreen.tsx';
 
-// Importa tu pantalla tipada
-import HomeScreen from './src/screens/Home/HomeScreen';
-// El import de '@react-native/new-app-screen' no es necesario en una app real
+function App() {
+    const isDarkMode = useColorScheme() === 'dark';
 
-function App(): React.JSX.Element { // Usar React.JSX.Element para el tipado de componentes
-  const isDarkMode = useColorScheme() === 'dark';
-
-  return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <PaperProvider>
-        <AppContent />
-      </PaperProvider>
-    </SafeAreaProvider>
-  );
+    return (
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <PaperProvider>
+                    <StatusBar
+                        translucent={false}
+                        backgroundColor="#fff"
+                        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+                    />
+                    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+                        <AppContent />
+                    </SafeAreaView>
+                </PaperProvider>
+            </GestureHandlerRootView>
+        </SafeAreaProvider>
+    );
 }
 
-function AppContent(): React.JSX.Element {
-  const safeAreaInsets = useSafeAreaInsets();
-
-  return (
-    // Aquí es donde en un proyecto real iría el AppNavigator
-    // Por ahora, cargamos la HomeScreen directamente
-    <View style={[styles.container, { paddingTop: safeAreaInsets.top }]}>
-      <HomeScreen />
-    </View>
-  );
+function AppContent() {
+    return (
+        <HomeScreen />
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+    safeArea: {
+        flex: 1,
+    },
 });
 
 export default App;

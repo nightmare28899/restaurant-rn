@@ -1,4 +1,4 @@
-package com.managetask
+package com.miappnativa
 
 import android.app.Application
 import com.facebook.react.PackageList
