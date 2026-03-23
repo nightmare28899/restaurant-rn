@@ -1,397 +1,190 @@
-import {useEffect, useRef, useState} from 'react';
-import {
-    Image,
-    Platform,
-    StyleSheet,
-    View,
-    ActivityIndicator,
-    PermissionsAndroid,
-    Alert, ScrollView,
-} from 'react-native';
-import {ActionSheetRef} from 'react-native-actions-sheet';
-import Geolocation from '@react-native-community/geolocation';
-import MapView, {PROVIDER_GOOGLE, Marker, Region} from 'react-native-maps';
-import {Button, TextInput, IconButton, Card, Text} from 'react-native-paper';
+import { useRef, useEffect } from 'react';
+import { StyleSheet, View, ActivityIndicator } from 'react-native';
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from 'react-native-maps';
+import { ActionSheetRef } from 'react-native-actions-sheet';
 import ActionSheetBase from '../components/actionSheet/ActionSheetBase.tsx';
 
-const HomeScreen = () => {
-    const apiKey = 'AIzaSyBrulJTy71RsZ_p-uLzOU0_35Lwn1HOLJ0';
+import { useLocation } from '../hooks/useLocation';
+import { useMapFeatures } from '../hooks/useMapFeatures';
+import { SearchBar } from '../components/home/SearchBar.tsx';
+import { MapControls } from '../components/home/MapControls.tsx';
+import { PlaceDetailsSheet } from '../components/home/PlaceDetailsSheet.tsx';
 
-    const [text, setText] = useState<string>('');
-    const [region, setRegion] = useState<Region | null>(null);
-    const [loading, setLoading] = useState(true);
-    const [placeSelected, setPlaceSelected] = useState<any>(null);
-    const [placeDataSelected, setPlaceDataSelected] = useState<any>(null);
+const HomeScreen = () => {
     const mapRef = useRef<MapView>(null);
-    const [showImagePlace, setShowImagePlace] = useState<string>("");
     const actionSheetRef = useRef<ActionSheetRef>(null);
 
-    const showActionSheet = () => {
-        if (actionSheetRef.current) {
-            actionSheetRef.current.show();
-            //setActionSheetRef(actionSheetRef.current);
+    const { userLocation, routeCoordinates, isTracking, loading, toggleTracking, getCurrentLocation } = useLocation();
+    const {
+        searchQuery,
+        setSearchQuery,
+        selectedPlace,
+        placeDetails,
+        markers,
+        directionsCoordinates,
+        showImagePlace,
+        handleSearch,
+        handleMapLongPress,
+        fetchDirections
+    } = useMapFeatures(userLocation);
+
+    // Initial focus on user location
+    useEffect(() => {
+        if (!loading && userLocation && mapRef.current) {
+            mapRef.current.animateToRegion({
+                ...userLocation,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+            }, 1000);
+        }
+    }, [loading, userLocation]);
+
+    // Show ActionSheet when a place is selected
+    useEffect(() => {
+        if (selectedPlace) {
+            actionSheetRef.current?.show();
+            // Move map to selected place
+            mapRef.current?.animateToRegion({
+                ...selectedPlace.coordinate,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+            }, 1000);
+        }
+    }, [selectedPlace]);
+
+    // Fit map to route when directions are found
+    useEffect(() => {
+        if (directionsCoordinates.length > 0 && mapRef.current) {
+            mapRef.current.fitToCoordinates(directionsCoordinates, {
+                edgePadding: { top: 50, right: 50, bottom: 50, left: 50 },
+                animated: true,
+            });
+        }
+    }, [directionsCoordinates]);
+
+    const handleFocusLocation = () => {
+        getCurrentLocation();
+        if (userLocation && mapRef.current) {
+            mapRef.current.animateToRegion({
+                ...userLocation,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+            }, 1000);
         }
     };
 
-    const [snapPoints, setSnapPoints] = useState([15, 35,80])
-
-    async function handlePoiClick(e: any) {
-        const {name, coordinate, placeId} = e.nativeEvent;
-        console.log( e.nativeEvent)
-        setPlaceSelected({name, coordinate, placeId});
-        await getLocationInfo({placeId}).then(data => {
-            console.log(data);
-            const imagePlace = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photo_reference=${data.photos[0].photo_reference}&key=${apiKey}`
-            setShowImagePlace(imagePlace);
-            setPlaceDataSelected(data);
-            setSnapPoints([35,80])
-            actionSheetRef.current?.snapToOffset(35)
-        });
-    }
-
-    async function getLocationInfo({placeId}: { placeId: string }) {
-        if (placeId) {
-            const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=name,formatted_address,photos,rating,geometry&key=${apiKey}`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-
-                return data.result;
-            } catch (error) {
-                console.error('Error fetching place details:', error);
-            }
-        }
-    }
-
-
-    const [marker, setMarker] = useState<any[]>([])
-
-    const getMark = async (e :any) => {
-        console.log(e.nativeEvent)
-        setMarker([e.nativeEvent.coordinate])
-        const { coordinate } = e.nativeEvent;
-        const { latitude, longitude } = coordinate
-        try {
-            const response = await fetch(
-                `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`
-            );
-            const data = await response.json();
-
-            if (data.results && data.results.length > 0) {
-                const placeId = data.results[0].place_id;
-                console.log('Place ID on long press:', placeId, data);
-                let body = {
-                    nativeEvent:{
-                        placeId: placeId,
-                        name:data.results[0].formatted_address,
-                        coordinate:data.results[0].navigation_points[0].location,
-                    }
+    const handleZoom = (zoomIn: boolean) => {
+        if (mapRef.current) {
+            mapRef.current.getCamera().then(camera => {
+                if (camera) {
+                    camera.zoom = (camera.zoom || 15) + (zoomIn ? 1 : -1);
+                    mapRef.current?.animateCamera(camera, { duration: 300 });
                 }
-                handlePoiClick(body)
-                // You can now use this placeId as needed
-            } else {
-                console.log('No place found for this location.');
-            }
-        } catch (error) {
-            console.error('Error during reverse geocoding:', error);
+            });
         }
+    };
 
-    }
-
-    useEffect(() => {
-        if (region && mapRef.current) {
-            const reg: Region = {
-                latitude: region.latitude,
-                longitude: region.longitude,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-            };
-            mapRef.current.animateToRegion(reg, 1000);
-        }
-    }, [region]);
-
-    useEffect(() => {
-        const requestPermission = async () => {
-            if (Platform.OS === 'android') {
-                const granted = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                );
-                if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-                    console.warn('Location permission denied');
-                    setLoading(false);
-                    return;
-                }
-            }
-
-            Geolocation.getCurrentPosition(
-                position => {
-                    const {latitude, longitude} = position.coords;
-                    setRegion({
-                        latitude,
-                        longitude,
-                        latitudeDelta: 0.01,
-                        longitudeDelta: 0.01,
-                    });
-                    setLoading(false);
-                    setTimeout(() => {
-                        showActionSheet();
-                    }, 300);
-                },
-                error => {
-                    console.error('Error getting location', error);
-                    setLoading(false);
-                },
-                {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
-            );
-        };
-
-        requestPermission().then();
-    }, []);
-
-    if (loading || !region) {
+    if (loading) {
         return (
             <View style={styles.loader}>
-                <ActivityIndicator size="large" color="#f5684a"/>
+                <ActivityIndicator size="large" color="#f5684a" />
             </View>
         );
     }
 
-
-
     return (
-        <>
+        <View style={styles.container}>
             <MapView
                 ref={mapRef}
                 provider={PROVIDER_GOOGLE}
                 style={styles.map}
-                region={region}
                 showsUserLocation
-                showsMyLocationButton
-                showsPointsOfInterests={true}
-                onLongPress={getMark}
-                onPoiClick={handlePoiClick}
-                onMapReady={() => {
-                    if (region && mapRef.current) {
-                        const reg: Region = {
-                            latitude: region.latitude,
-                            longitude: region.longitude,
-                            latitudeDelta: 0.01,
-                            longitudeDelta: 0.01,
-                        };
-                        mapRef.current.animateToRegion(reg, 1000);
-                    }
-                }}
+                showsMyLocationButton={false} // Custom button used
+                onLongPress={handleMapLongPress}
+                initialRegion={userLocation ? {
+                    ...userLocation,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                } : undefined}
             >
-                {marker.map((marker, index) => (
-                        <Marker key={index+'dsa'} coordinate={marker} title="You are here" />
-                    ))
-                }
+                {markers.map((m, index) => (
+                    <Marker
+                        key={index + 'mark'}
+                        coordinate={m.coordinate}
+                        title={m.name}
+                    />
+                ))}
 
+                <Polyline
+                    coordinates={routeCoordinates}
+                    strokeColor="#f5684a"
+                    strokeWidth={6}
+                />
+                <Polyline
+                    coordinates={directionsCoordinates}
+                    strokeColor="#4285F4"
+                    strokeWidth={4}
+                />
             </MapView>
+
+            <View style={styles.searchContainer}>
+                <SearchBar
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                    onSubmit={handleSearch}
+                />
+            </View>
+
+            <MapControls
+                isTracking={isTracking}
+                onToggleTracking={toggleTracking}
+                onFocusLocation={handleFocusLocation}
+                onZoomIn={() => handleZoom(true)}
+                onZoomOut={() => handleZoom(false)}
+            />
 
             <ActionSheetBase
                 actionSheetRef={actionSheetRef}
-                closeable={false}
+                closeable={true}
                 gesture={true}
                 showBackgroundColor={true}
-                containerStyle={{maxHeight: '70%'}}
-                snapPoints={snapPoints}
+                containerStyle={{ maxHeight: '70%' }}
+                snapPoints={[35, 80]}
             >
-                <View style={styles.content}>
-                    <TextInput
-                        label="Search"
-                        value={text}
-                        onChangeText={text => setText(text)}
-                        mode="outlined"
-                        outlineColor="#d0cfcf"
-                        textColor="#d0cfcf"
-                        outlineStyle={{
-                            borderRadius: 10,
-                        }}
-                        left={
-                            <TextInput.Icon
-                                icon="magnify"
-                                onPress={() => console.log('Icono presionado')}
-                                color="#e74c3c"
-                            />
+                <PlaceDetailsSheet
+                    place={selectedPlace}
+                    details={placeDetails}
+                    photoUrl={showImagePlace}
+                    onRoutePress={() => {
+                        if (selectedPlace) {
+                            fetchDirections(selectedPlace.coordinate);
+                            actionSheetRef.current?.hide();
                         }
-                        theme={{
-                            colors: {
-                                placeholder: 'purple',
-                            },
-                        }}
-                        style={[styles.input]}
-                    />
-
-                    <Button style={styles.button} onPress={() => {
-                    }}>
-                        <IconButton
-                            icon="tune-variant"
-                            iconColor="#fff"
-                            size={15}
-                            animated
-                            contentStyle={{padding: 0}}
-                        />
-                    </Button>
-                </View>
-
-                <ScrollView
-                    style={{
-                        width: '100%',
-                        flexShrink: 1,
-                        height:'100%',
-                    }}>
-                    <View
-                        style={{
-                            paddingHorizontal: 10,
-                            width: '100%',
-                            height:'60%'
-                        }}
-                    >
-                        {placeSelected !== null && (
-                            <Card style={styles.card} mode="elevated">
-                                <View style={styles.container}>
-                                    <Image
-                                        source={{
-                                            uri: showImagePlace,
-                                        }}
-                                        style={styles.image}
-                                        resizeMode="cover"
-                                    />
-
-                                    <View style={styles.infoContainer}>
-                                        <Text style={styles.title}>{placeSelected.name}</Text>
-
-                                        <View style={styles.ratingContainer}>
-                                            <IconButton
-                                                icon="star"
-                                                iconColor="#F5D94AFF"
-                                                size={18}
-                                                animated
-                                                contentStyle={{padding: 0}}
-                                            />
-                                            <Text style={styles.ratingText}>{placeDataSelected?.rating}</Text>
-                                            <Text style={styles.reviewText}> • 120 Reviews</Text>
-                                        </View>
-
-                                        <View style={styles.bottomRow}>
-                                            <Button
-                                                compact
-                                                style={styles.openButton}
-                                                labelStyle={{color: 'white', fontSize: 12}}
-                                            >
-                                                Open
-                                            </Button>
-
-                                            <View style={styles.locationContainer}>
-                                                <IconButton
-                                                    icon="map-marker"
-                                                    iconColor="#f5684a"
-                                                    size={18}
-                                                    animated
-                                                    contentStyle={{padding: 0}}
-                                                />
-                                                <Text style={styles.locationText}>USA</Text>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </View>
-                            </Card>
-                        )}
-                    </View>
-                </ScrollView>
-
-                <View style={{paddingBottom: 20}}/>
+                    }}
+                />
             </ActionSheetBase>
-        </>
+        </View>
     );
 };
 
 const styles = StyleSheet.create({
-    content: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        paddingHorizontal: 20,
-        paddingVertical: 20,
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-    },
-    input: {
-        backgroundColor: 'white',
-        flex: 1,
-    },
-    button: {
-        marginTop: 6,
-        backgroundColor: '#f5684a',
-        borderRadius: 12,
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        display: 'flex',
-    },
-    card: {
-        borderRadius: 16,
-        elevation: 2,
-        margin: 10,
-        backgroundColor: '#fff',
-        overflow: 'hidden',
-    },
     container: {
-        flexDirection: 'row',
-        padding: 10,
-    },
-    image: {
-        width: 80,
-        borderRadius: 12,
-    },
-    infoContainer: {
         flex: 1,
-        marginLeft: 10,
-        justifyContent: 'space-between',
     },
-    ratingContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 2,
+    map: {
+        flex: 1,
     },
-    ratingText: {
-        fontWeight: '600',
-        color: '#333',
-    },
-    reviewText: {
-        color: '#777',
-        fontSize: 13,
-    },
-    bottomRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginTop: 4,
-    },
-    openButton: {
-        backgroundColor: '#4CAF50',
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        paddingVertical: 2,
-        alignSelf: 'center',
-    },
-    locationContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: 10,
-    },
-    locationText: {
-        marginLeft: 4,
-        color: '#555',
-    },
-    map: {flex: 1},
     loader: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
     },
+    searchContainer: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+    }
 });
 
 export default HomeScreen;

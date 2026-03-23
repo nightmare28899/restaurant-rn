@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let factory = RCTReactNativeFactory(delegate: delegate)
     delegate.dependencyProvider = RCTAppDependencyProvider()
 
-    GMSServices.provideAPIKey("AIzaSyBrulJTy71RsZ_p-uLzOU0_35Lwn1HOLJ0")
+    GMSServices.provideAPIKey("YOUR_API_KEY_HERE")
 
     reactNativeDelegate = delegate
     reactNativeFactory = factory

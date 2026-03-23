@@ -19,12 +19,12 @@ function App() {
         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
             <GestureHandlerRootView style={{ flex: 1 }}>
                 <PaperProvider>
+                    <StatusBar
+                        translucent={false}
+                        backgroundColor="#fff"
+                        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+                    />
                     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-                        <StatusBar
-                            translucent={false}
-                            backgroundColor="#fff"
-                            barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-                        />
                         <AppContent />
                     </SafeAreaView>
                 </PaperProvider>
